@@ -145,12 +145,12 @@ func (r *Repository) updateBook(context *fiber.Ctx) error {
 }
 
 func (r *Repository) SetupRoutes(app *fiber.App) {
-	api := app.Group("/api")
-	api.Post("/create_books", r.CreateBook)
-	api.Delete("delete_book/:id", r.DeleteBook)
-	api.Get("/get_books/:id", r.GetBookByID)
-	api.Get("/books", r.GetBooks)
-	api.Put("/get_books/:id", r.updateBook)
+	api := app.Group("/books")
+	api.Post("/create_book", r.CreateBook)
+	api.Delete("/:id", r.DeleteBook)
+	api.Get("/:id", r.GetBookByID)
+	api.Get("/", r.GetBooks)
+	api.Put("/:id", r.updateBook)
 
 }
 
