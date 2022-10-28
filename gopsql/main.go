@@ -147,21 +147,23 @@ func main() {
 		SSLMode:  os.Getenv("DB_SSLMODE"),
 	}
 
+	// db, err := storage.NewConnection(config)
 	db, err := storage.NewConnection(config)
+
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("could not load the database")
+	}
+	// err = models.MigrateBooks(db)
+	err = models.MigrateBooks(db)
+
+	if err != nil {
+		log.Fatal("could not migrate db")
 	}
 
 	r := Repository{
 		DB: db,
 	}
-
-	err = models.MigrateBooks(db)
-	if err != nil {
-		log.Fatal("Could not migrate db")
-	}
 	app := fiber.New()
-
 	r.SetupRoutes(app)
-	app.Listen("8080 ")
+	app.Listen(":8080")
 }
