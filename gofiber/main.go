@@ -22,7 +22,7 @@ type Repository struct {
 	DB *gorm.DB
 }
 
-func (r *Repository) createBook(context *fiber.Ctx) error {
+func (r *Repository) CreateBook(context *fiber.Ctx) error {
 	bookModel := Book{}
 
 	err := context.BodyParser(&bookModel)
@@ -49,7 +49,7 @@ func (r *Repository) createBook(context *fiber.Ctx) error {
 	return nil
 }
 
-func (r *Repository) deleteBook(context *fiber.Ctx) error {
+func (r *Repository) DeleteBook(context *fiber.Ctx) error {
 	bookModel := models.Books{}
 	id := context.Params("id")
 	if id == "" {
@@ -73,7 +73,7 @@ func (r *Repository) deleteBook(context *fiber.Ctx) error {
 
 	return nil
 }
-func (r *Repository) getBookById(context *fiber.Ctx) error {
+func (r *Repository) GetBookByID(context *fiber.Ctx) error {
 	id := context.Params("id")
 	bookModel := models.Books{}
 
@@ -100,7 +100,8 @@ func (r *Repository) getBookById(context *fiber.Ctx) error {
 	)
 	return nil
 }
-func (r *Repository) getBooks(context *fiber.Ctx) error {
+
+func (r *Repository) GetBooks(context *fiber.Ctx) error {
 	bookModels := &[]models.Books{}
 	err := r.DB.Find(bookModels).Error
 	if err != nil {
@@ -120,15 +121,36 @@ func (r *Repository) getBooks(context *fiber.Ctx) error {
 	return nil
 }
 
-// func (r *Repository) updateBook(context *fiber.Ctx) error { return nil }
+func (r *Repository) updateBook(context *fiber.Ctx) error {
+
+	bookModel := &models.Books{}
+	id := context.Params("id")
+
+	err := context.BodyParser(&bookModel)
+	if err != nil {
+		context.Status(http.StatusUnprocessableEntity).JSON(
+			&fiber.Map{"message": "id can't be empty"},
+		)
+		return err
+	}
+	r.DB.Where("id = ?", id).Updates(&bookModel)
+	r.DB.Where("id = ?", id).First(&bookModel)
+	context.Status(http.StatusOK).JSON(
+		&fiber.Map{
+			"message": "book id fetched",
+			"data":    bookModel,
+		},
+	)
+	return nil
+}
 
 func (r *Repository) SetupRoutes(app *fiber.App) {
 	api := app.Group("/api")
-	api.Post("/create-post", r.createBook)
-	api.Delete("/delete-book/:id", r.deleteBook)
-	api.Get("/get-books/:id", r.getBookById)
-	api.Get("/get-books", r.getBooks)
-	// api.Put("/get-boooks/:id", r.updateBook)
+	api.Post("/create_books", r.CreateBook)
+	api.Delete("delete_book/:id", r.DeleteBook)
+	api.Get("/get_books/:id", r.GetBookByID)
+	api.Get("/books", r.GetBooks)
+	api.Put("/get_books/:id", r.updateBook)
 
 }
 
