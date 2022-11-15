@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	jwt "github.com/dgrijalva/jwt-go"
 )
 
 func main() {
@@ -22,7 +22,7 @@ func GetJWT() (string, error) {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["authorized"] = true
 	claims["client"] = "kelche"
-	claims["aud"] = " billing.jwt.go.io"
+	claims["aud"] = "billing.jwtgo.io"
 	claims["iss"] = "jwtgo.io"
 	claims["exp"] = time.Now().Add(time.Minute * 1).Unix()
 
