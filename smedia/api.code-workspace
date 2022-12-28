@@ -1,0 +1,11 @@
+{
+  "folders": [
+	{
+		"path": "../mservice/api"
+	},
+	{
+		"path": "../mservice/auth"
+	}
+],
+  "settings": {}
+}
